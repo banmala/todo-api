@@ -1,4 +1,4 @@
-npm i
+npm i <br />
 npx prisma generate <br />
 npm run dev
 
