@@ -1,5 +1,5 @@
-npm i \n
-npx prisma generate \n
+npm i
+npx prisma generate <br />
 npm run dev
 
 APIS:
