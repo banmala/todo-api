@@ -1,19 +1,8 @@
-import express from "express";
-import { prisma } from "./db.js";
-import todoRouter from "./routes/todo.route.js";
-import { authMiddleware } from "./routes/auth.js";
+import { prisma } from "../db.js";
 
-const app = express();
-app.use(express.json());
 
-app.use("/api/todos", authMiddleware, todoRouter);
-
-app.get("/", (req, res) => {
-  res.status(200).send("Hello world");
-});
-
-// Get all todos
-app.get("/todos", async (req, res) => {
+//Get All todos
+const getAllTodos = async (req, res) => {
   try {
     const todos = await prisma.todo.findMany({
       orderBy: { createdAt: "desc" },
@@ -22,10 +11,10 @@ app.get("/todos", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch todos" });
   }
-});
+};
 
 // Get single todo
-app.get("/todos/:id", async (req, res) => {
+const getSingleTodo = async (req, res) => {
   try {
     const todo = await prisma.todo.findUnique({
       where: { id: parseInt(req.params.id) },
@@ -35,10 +24,10 @@ app.get("/todos/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch todo" });
   }
-});
+};
 
 // Create todo
-app.post("/todos", async (req, res) => {
+const createTodo = async (req, res) => {
   try {
     const { title } = req.body;
     if (!title) return res.status(400).json({ error: "Title is required" });
@@ -50,10 +39,10 @@ app.post("/todos", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to create todo" });
   }
-});
+};
 
 // Update todo
-app.put("/todos/:id", async (req, res) => {
+const updateTodo = async (req, res) => {
   try {
     const { title, completed } = req.body;
     const todo = await prisma.todo.update({
@@ -70,10 +59,10 @@ app.put("/todos/:id", async (req, res) => {
     }
     res.status(500).json({ error: "Failed to update todo" });
   }
-});
+};
 
 // Delete todo
-app.delete("/todos/:id", async (req, res) => {
+const deleteTodo = async (req, res) => {
   try {
     await prisma.todo.delete({
       where: { id: parseInt(req.params.id) },
@@ -85,9 +74,6 @@ app.delete("/todos/:id", async (req, res) => {
     }
     res.status(500).json({ error: "Failed to delete todo" });
   }
-});
+};
 
-const port = 3000;
-app.listen(port, async () => {
-  console.log(`Todo API running at http://localhost:${port}`);
-});
+export { getAllTodos, getSingleTodo, createTodo, updateTodo, deleteTodo };
